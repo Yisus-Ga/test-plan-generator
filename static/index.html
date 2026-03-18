@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Generador de Test Plan</title>
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="/static/assets/css/themes.css">
+  <link rel="stylesheet" href="/static/assets/css/components.css">
+  <link rel="stylesheet" href="/static/assets/css/analysis.css">
+  <link rel="stylesheet" href="/static/assets/css/navigation.css">
+  <link rel="stylesheet" href="/static/style.css">
+  
+  <!-- marked.js para renderizar Markdown en el navegador -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+  <!-- Navegación -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h1>Generador de Test Plan</h1>
+    </div>
+    <div class="navbar-links">
+      <a href="#/" class="nav-link" data-route="/">Generar Test Plan</a>
+      <a href="#/history" class="nav-link" data-route="/history">Historial</a>
+      <a href="#/projects" class="nav-link" data-route="/projects">Proyectos</a>
+    </div>
+  </nav>
+
+  <!-- Contenedor principal para páginas -->
+  <main id="app-container">
+    <!-- Página de generación (ruta /) -->
+    <div id="page-generator" class="page">
+      <p class="lead">Completa los campos de la Historia de Usuario y presiona <strong>Analizar</strong>.
+        El documento .xlsx con el Test Plan se descargará automáticamente</p>
+
+      <div class="grid">
+    <!-- Columna izquierda: formulario -->
+    <div class="card">
+      <h3>Carga de HU</h3>
+
+      <!-- Formulario de HU -->
+      <div class="form-group">
+        <label for="projectCode" class="form-label">
+          Proyecto
+          <span class="text-error">*</span>
+        </label>
+        <select id="projectCode" class="form-input" required>
+          <option value="">Cargando proyectos...</option>
+        </select>
+        <small class="form-help">Selecciona el proyecto al que pertenece esta HU</small>
+      </div>
+
+      <div class="form-group">
+        <label for="huId" class="form-label">
+          ID
+          <span class="text-error">*</span>
+        </label>
+        <input 
+          type="text" 
+          id="huId" 
+          class="form-input"
+          placeholder="Ej: AER25-101" 
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="huTitle" class="form-label">
+          Título
+          <span class="text-error">*</span>
+        </label>
+        <input 
+          type="text" 
+          id="huTitle" 
+          class="form-input"
+          placeholder="Ej: FrontEnd -> Pantalla principal Tipos de Reporte" 
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="huDescription" class="form-label">
+          Descripción
+          <span class="text-error">*</span>
+        </label>
+        <textarea 
+          id="huDescription" 
+          class="form-textarea"
+          placeholder="Pegar la descripción (varias líneas permitidas)"
+          required
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="huAC" class="form-label">
+          Criterios De Aceptación
+          <span class="text-error">*</span>
+        </label>
+        <textarea 
+          id="huAC" 
+          class="form-textarea"
+          placeholder="Pegar criterios de aceptación (varias líneas permitidas)"
+          required
+        ></textarea>
+      </div>
+
+      <!-- Botones -->
+      <div class="controls">
+        <button id="analyzeBtn" class="btn btn-primary" disabled>🔎 Analizar</button>
+        <div class="download-combo" style="display: inline-flex; align-items: center; gap: var(--spacing-xs);">
+          <select id="downloadFormat" class="form-input" style="width: auto; min-width: 140px;" title="Formato de descarga">
+            <option value="xlsx">Excel (.xlsx)</option>
+            <option value="csv">CSV</option>
+            <option value="jira">Jira (CSV)</option>
+            <option value="json">JSON</option>
+          </select>
+          <button id="downloadBtn" class="btn btn-secondary" disabled>⬇️ Descargar</button>
+        </div>
+        <button id="clearBtn" class="btn btn-danger">🧹 Limpiar</button>
+      </div>
+
+      <div id="status"></div>
+    </div>
+
+    <!-- Columna derecha: preview / analysis -->
+    <div class="card">
+      <h3>Resultado del Análisis</h3>
+      <div id="analysis">Aquí aparecerá el análisis.</div>
+      <div class="controls" style="margin-top: var(--spacing-md);">
+        <button id="chatBtn" class="btn btn-secondary" disabled title="Chat sobre este Test Plan">💬 Chat IA</button>
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <!-- Página de historial (ruta /history) -->
+    <div id="page-history" class="page" style="display: none;">
+      <!-- Se renderiza dinámicamente -->
+    </div>
+
+    <!-- Página de proyectos (ruta /projects) -->
+    <div id="page-projects" class="page" style="display: none;">
+      <!-- Se renderiza dinámicamente -->
+    </div>
+  </main>
+
+  <!-- Modal de Chat -->
+  <div id="chatModal" class="modal" role="dialog" aria-labelledby="chatModalProject" aria-hidden="true">
+    <div class="modal-backdrop" id="chatModalBackdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <div id="chatModalProject" class="modal-title-line" aria-hidden="false">Proyecto</div>
+            <div id="chatModalHu" class="modal-title-line modal-title-line-secondary">ID | Título HU</div>
+          </div>
+          <button type="button" class="modal-close" id="chatModalClose" aria-label="Cerrar">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="chatMessages" class="chat-messages"></div>
+          <div id="chatLoadingIndicator" class="chat-loading" style="display: none;" aria-live="polite">
+            <span class="chat-loading-dots"></span>
+            <span class="chat-loading-text">Preparando respuesta...</span>
+          </div>
+          <div class="chat-input-wrap">
+            <textarea id="chatInput" class="chat-input" rows="2" placeholder="Escribe una consulta sobre el test plan..." maxlength="2000"></textarea>
+            <button type="button" id="chatSendBtn" class="btn btn-primary chat-send-btn">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script principal (módulos ES6) -->
+  <script type="module" src="/static/assets/js/main.js?v=4.1"></script>
+</body>
+
+</html>

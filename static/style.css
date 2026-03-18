@@ -1,0 +1,68 @@
+/* Variables CSS ahora están en assets/css/themes.css */
+/* Mantener estilos base aquí */
+
+body {
+  font-family: var(--font-family-base, "Segoe UI", Roboto, Arial, sans-serif);
+  margin: var(--spacing-md) auto;
+  max-width: 1100px;
+  padding: 0 var(--spacing-md);
+  background: var(--bg);
+  color: var(--color-text-primary, #222);
+}
+
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+}
+
+p.lead {
+  margin-top: 0;
+  color: #555;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 18px;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* Los estilos de formularios y botones ahora están en assets/css/components.css */
+
+.controls {
+  display: flex;
+  gap: var(--spacing-sm, 12px);
+  margin-top: var(--spacing-md, 14px);
+}
+
+#analysis {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2px;
+  min-height: 180px;
+  background: #fafafa;
+  overflow: auto;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  word-wrap: break-word;       /* Rompe líneas largas si exceden el ancho */
+  overflow-x: hidden;          /* Evita scroll horizontal */
+  overflow-y: auto;  
+}
+
+.file-info {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 6px;
+}
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,113 @@
+/**
+ * Estilos para la visualización del análisis de Test Plans.
+ */
+
+#analysis {
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  min-height: 200px;
+  max-height: 600px;
+  background: var(--color-bg-primary);
+  overflow-y: auto;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  word-wrap: break-word;
+  overflow-x: hidden;
+}
+
+#analysis:empty::before {
+  content: "Aquí aparecerá el análisis.";
+  color: var(--color-text-tertiary);
+  font-style: italic;
+}
+
+/* Estilos para contenido markdown renderizado */
+#analysis h1,
+#analysis h2,
+#analysis h3 {
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+#analysis h1 {
+  font-size: var(--font-size-2xl);
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: var(--spacing-xs);
+}
+
+#analysis h2 {
+  font-size: var(--font-size-xl);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--spacing-xs);
+}
+
+#analysis h3 {
+  font-size: var(--font-size-lg);
+}
+
+#analysis p {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-secondary);
+}
+
+#analysis ul,
+#analysis ol {
+  margin-left: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+#analysis li {
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-secondary);
+}
+
+#analysis strong {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+#analysis code {
+  background-color: var(--color-gray-100);
+  padding: 2px 6px;
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: 0.9em;
+}
+
+#analysis pre {
+  background-color: var(--color-gray-100);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  overflow-x: auto;
+  margin-bottom: var(--spacing-md);
+}
+
+#analysis blockquote {
+  border-left: 4px solid var(--color-primary);
+  padding-left: var(--spacing-md);
+  margin-left: 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+/* Mejorar scrollbar */
+#analysis::-webkit-scrollbar {
+  width: 8px;
+}
+
+#analysis::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+  border-radius: var(--border-radius-md);
+}
+
+#analysis::-webkit-scrollbar-thumb {
+  background: var(--color-gray-400);
+  border-radius: var(--border-radius-md);
+}
+
+#analysis::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
+}
