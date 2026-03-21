@@ -80,7 +80,7 @@ static/
 | Semana | Enfoque | Estado |
 |--------|---------|--------|
 | **Semana 1** | Configurar pytest, estructura `tests/`, tests de utilidades (parsers, validaciones) | ✅ En curso |
-| **Semana 2** | Tests de servicios (TestPlanService, etc.) con mocks (sin DB real) | Pendiente |
+| **Semana 2** | Tests de servicios (TestPlanService, etc.) con mocks (sin DB real) | ✅ En progreso |
 | **Semana 3** | Tests de endpoints con BD en memoria | Pendiente |
 
 Objetivo: cobertura progresiva (unitario → integración → E2E).
@@ -92,6 +92,11 @@ Objetivo: cobertura progresiva (unitario → integración → E2E).
 - [x] Tests de `excel_generator` (clean_filename)
 - [x] Tests de schemas (UserStoryCreate validaciones)
 - [x] Documentación en [11_PLAN_TESTS_AUTOMATIZADOS.md](./11_PLAN_TESTS_AUTOMATIZADOS.md)
+
+**Implementado (Semana 2)**:
+- [x] `tests/integration/test_services.py`
+- [x] Tests de UserStoryService (3 tests, sin mocks)
+- [x] Tests de TestPlanService (3 tests, AIService y repos mockeados)
 
 ---
 

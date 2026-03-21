@@ -42,20 +42,31 @@ tests/
 
 ---
 
-### Semana 2: Tests de servicios con mocks
+### Semana 2: Tests de servicios con mocks ✅
 
-- Mock del `AIService` para no llamar a OpenAI
-- Tests de `TestPlanService` (sin DB real)
-- Tests de `ProjectService`, `ChatService` con mocks
+| Tarea | Estado | Descripción |
+|-------|--------|-------------|
+| Estructura `tests/integration/` | ✅ | Carpeta y `test_services.py` |
+| Tests de `UserStoryService` | ✅ | 3 tests sin mocks (lógica pura) |
+| Tests de `TestPlanService` | ✅ | 3 tests con mock de AIService y repos |
+| Mock AIService | ✅ | `patch()` devuelve markdown falso |
+| Mock repositorios | ✅ | `AsyncMock` para project_repo, user_story_repo, test_plan_repo |
+
+**Técnica usada**: `unittest.mock.patch` para reemplazar AIService; `AsyncMock` para métodos async de repositorios.
 
 ---
 
-### Semana 3: Tests de endpoints con BD en memoria
+### Semana 3: Tests de endpoints con BD en memoria ✅
 
-- Fixture de base de datos SQLite en memoria
-- Tests de `POST /api/v1/test-plans/generate`
-- Tests de `GET /api/v1/test-plans`
-- Tests de `GET /api/v1/projects`
+| Tarea | Estado | Descripción |
+|-------|--------|-------------|
+| `tests/integration/conftest.py` | ✅ | Fixture `client` con BD SQLite en memoria compartida |
+| `tests/integration/test_endpoints.py` | ✅ | 6 tests para endpoints de la API |
+| GET `/api/v1/projects/` | ✅ | Devuelve AEROMAN precargado, valida estructura |
+| GET `/api/v1/test-plans/` | ✅ | Lista vacía inicial, filtros |
+| POST `/api/v1/analyze/` | ✅ | Con mock de AIService, devuelve token y download_url |
+
+**Detalles técnicos**: Se usa `DATABASE_URL=sqlite:///file:testdb?mode=memory&cache=shared` para que todas las conexiones compartan la misma BD en memoria. El `client` fixture hace drop/create de tablas y crea proyecto AEROMAN antes de cada test. Para `/analyze/` se mockea `AIService` con `patch()`.
 
 ---
 
@@ -76,6 +87,12 @@ python -m pytest tests/unit/
 
 # Un archivo específico
 python -m pytest tests/unit/test_markdown_parser.py -v
+
+# Solo tests de integración (Semanas 2 y 3)
+python -m pytest tests/integration/ -v
+
+# Solo tests de endpoints (BD en memoria)
+python -m pytest tests/integration/test_endpoints.py -v
 
 # Con cobertura (opcional, requiere pytest-cov)
 python -m pytest tests/ --cov=app

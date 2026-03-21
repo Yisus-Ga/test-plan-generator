@@ -7,40 +7,24 @@ pip install -r requirements.txt
 # Ejecutar la app
 uvicorn app.main:app --reload
 
-# Ejecutar tests
+# Ejecutar todos los tests
 python -m pytest tests/ -v
+
+# Solo tests unitarios (Semana 1)
+python -m pytest tests/unit/ -v
+
+# Solo tests de integración (Semana 2 + 3: servicios y endpoints)
+python -m pytest tests/integration/ -v
+
+# Solo tests de endpoints (BD en memoria)
+python -m pytest tests/integration/test_endpoints.py -v
 
 # Desactivar
 deactivate
 
 # ========== GITHUB - Subir cambios ==========
 
-# Ir a la raíz del proyecto
-cd "c:\Users\jgallardo\OneDrive - ACCION POINT SA\Documentos\AP\IA\Agent\v5"
 
-# Inicializar Git (solo la primera vez, si aún no es repositorio)
-git init
-
-# Ver estado (qué archivos cambiaron, qué falta subir)
-git status
-
-# Agregar todos los cambios al área de preparación
-git add .
-
-# Verificar que .env NO esté en la lista (debe estar en .gitignore)
-git status
-
-# Crear commit con un mensaje descriptivo
-git commit -m "Descripción breve de los cambios"
-
-# Agregar el repositorio remoto (solo la primera vez - reemplaza TU_USUARIO y NOMBRE_REPO)
-git remote add origin https://github.com/TU_USUARIO/NOMBRE_REPO.git
-
-# Renombrar rama a main (solo si Git lo pide)
-git branch -M main
-
-# Subir los commits a GitHub
-git push -u origin main
 
 # --- Comandos para actualizaciones posteriores (cuando ya subiste una vez) ---
 # git add .
