@@ -186,6 +186,22 @@ Esta documentación está organizada en documentos especializados que cubren dif
 
 ---
 
+### 11. [Plan de Tests Automatizados](./11_PLAN_TESTS_AUTOMATIZADOS.md)
+
+**Contenido**:
+- Configuración de pytest
+- Estructura de carpetas tests/
+- Plan por semanas (utilidades → servicios → endpoints)
+- Cómo ejecutar los tests
+- Cobertura y buenas prácticas
+
+**Cuándo leerlo**:
+- Al implementar o modificar tests
+- Para entender la estrategia de testing
+- Al agregar nuevos módulos
+
+---
+
 ## 🗺️ Flujo de Lectura Recomendado
 
 ### Para nuevos en el proyecto (empezar aquí)

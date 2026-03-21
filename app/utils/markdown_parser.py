@@ -28,10 +28,16 @@ def parse_markdown_table_to_dict(test_plan_md: str) -> List[Dict[str, str]]:
             if line.startswith("|"):
                 table_lines.append(line)
     
+    # Patrón para detectar línea separadora de tabla (|----|----|...|)
+    separator_pattern = re.compile(r"^[-:\s]+$")
+
     test_cases = []
     for line in table_lines:
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if len(cells) == 6:
+            # Saltar línea separadora (todas las celdas son guiones/espacios)
+            if all(separator_pattern.match(cell) for cell in cells):
+                continue
             test_cases.append({
                 "priority": cells[0],
                 "tc_id": cells[1],
@@ -40,7 +46,7 @@ def parse_markdown_table_to_dict(test_plan_md: str) -> List[Dict[str, str]]:
                 "expected_validation": cells[4],
                 "obtained_result": cells[5] if len(cells) > 5 else ""
             })
-    
+
     return test_cases
 
 

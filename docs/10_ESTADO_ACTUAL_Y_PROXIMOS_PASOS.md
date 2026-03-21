@@ -55,7 +55,7 @@ static/
 
 ### Lo que NO está implementado aún
 
-- Tests automatizados
+- Tests automatizados (Semana 1 en curso: pytest configurado, tests de utilidades)
 - Plantillas de prompts (personalización sin tocar código)
 - Imágenes en Historias de Usuario
 - MCP Server
@@ -77,13 +77,21 @@ static/
 
 ### Paso 2: Tests Automatizados
 
-| Semana | Enfoque |
-|--------|---------|
-| **Semana 1** | Configurar pytest, estructura `tests/`, tests de utilidades (parsers, validaciones) |
-| **Semana 2** | Tests de servicios (TestPlanService, etc.) con mocks (sin DB real) |
-| **Semana 3** | Tests de endpoints con BD en memoria |
+| Semana | Enfoque | Estado |
+|--------|---------|--------|
+| **Semana 1** | Configurar pytest, estructura `tests/`, tests de utilidades (parsers, validaciones) | ✅ En curso |
+| **Semana 2** | Tests de servicios (TestPlanService, etc.) con mocks (sin DB real) | Pendiente |
+| **Semana 3** | Tests de endpoints con BD en memoria | Pendiente |
 
 Objetivo: cobertura progresiva (unitario → integración → E2E).
+
+**Implementado (Semana 1)**:
+- [x] pytest + pytest-asyncio en `requirements.txt`
+- [x] Estructura `tests/unit/`, `tests/conftest.py`, `pytest.ini`
+- [x] Tests de `markdown_parser` (14 tests pasando)
+- [x] Tests de `excel_generator` (clean_filename)
+- [x] Tests de schemas (UserStoryCreate validaciones)
+- [x] Documentación en [11_PLAN_TESTS_AUTOMATIZADOS.md](./11_PLAN_TESTS_AUTOMATIZADOS.md)
 
 ---
 
@@ -123,6 +131,7 @@ Referencia: [08_INFORME_MCP_OPCIONES_Y_RECOMENDACIONES.md](./08_INFORME_MCP_OPCI
 | [07_ESCALADO_PROYECTO.md](./07_ESCALADO_PROYECTO.md) | Fases completadas y futuras |
 | [08_INFORME_MCP_OPCIONES_Y_RECOMENDACIONES.md](./08_INFORME_MCP_OPCIONES_Y_RECOMENDACIONES.md) | Opciones para MCP |
 | [09_GUIA_PUBLICAR_EN_GITHUB.md](./09_GUIA_PUBLICAR_EN_GITHUB.md) | Guía para publicar sin exponer claves |
+| [11_PLAN_TESTS_AUTOMATIZADOS.md](./11_PLAN_TESTS_AUTOMATIZADOS.md) | Plan y configuración de tests |
 
 ---
 

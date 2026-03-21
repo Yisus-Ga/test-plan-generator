@@ -12,14 +12,14 @@ class UserStoryCreate(BaseModel):
     story_id: str = Field(..., description="ID único de la HU (ej: AER25-101)")
     title: str = Field(..., min_length=1, max_length=200)
     description: str = Field(..., min_length=1, max_length=2000)
-    acceptance_criteria: List[str] = Field(..., min_items=1)
+    acceptance_criteria: List[str] = Field(..., min_length=1)
 
 
 class UserStoryUpdate(BaseModel):
     """Schema para actualizar una HU"""
     title: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = Field(None, min_length=1, max_length=2000)
-    acceptance_criteria: Optional[List[str]] = Field(None, min_items=1)
+    acceptance_criteria: Optional[List[str]] = Field(None, min_length=1)
 
 
 class UserStoryResponse(BaseModel):
