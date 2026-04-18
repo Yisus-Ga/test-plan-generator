@@ -1,7 +1,7 @@
 # Activar (desde la raíz del proyecto)
 .\.venv\Scripts\Activate
 
-# Instalar dependencias
+# Instalar dependencias (primera vez)
 pip install -r requirements.txt
 
 # Ejecutar la app
