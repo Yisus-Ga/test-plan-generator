@@ -155,25 +155,37 @@
       <div class="modal-content">
         <div class="modal-header">
           <div class="modal-title-wrap">
-            <div id="chatModalProject" class="modal-title-line" aria-hidden="false">Proyecto</div>
+            <div class="chat-header-row">
+              <div id="chatModalProject" class="modal-title-line" aria-hidden="false">Proyecto</div>
+              <span id="bugReportBadge" class="bug-report-badge" aria-live="polite">🐛 Modo Reporte</span>
+            </div>
             <div id="chatModalHu" class="modal-title-line modal-title-line-secondary">ID | Título HU</div>
           </div>
-          <button type="button" class="modal-close" id="chatModalClose" aria-label="Cerrar">&times;</button>
+          <div style="display:flex;align-items:center;gap:var(--spacing-sm);">
+            <button type="button" id="bugReportBtn" class="bug-report-btn" title="Activar modo reporte de bugs">
+              🐛 Reporte de Bugs
+            </button>
+            <button type="button" class="modal-close" id="chatModalClose" aria-label="Cerrar">&times;</button>
+          </div>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" id="chatModalBody">
           <div id="chatMessages" class="chat-messages"></div>
           <div id="chatLoadingIndicator" class="chat-loading" style="display: none;" aria-live="polite">
             <span class="chat-loading-dots"></span>
             <span class="chat-loading-text">Preparando respuesta...</span>
           </div>
-          <div class="chat-input-wrap">
+          <div class="chat-input-wrap" id="chatInputWrap">
             <textarea id="chatInput" class="chat-input" placeholder="Escribe una consulta sobre el test plan..." maxlength="2000"></textarea>
             <button type="button" id="chatSendBtn" class="btn btn-primary chat-send-btn">Enviar</button>
           </div>
+          <button type="button" id="bugReportExitBtn" class="bug-report-exit-btn">← Volver al chat normal</button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Toast de copiado -->
+  <div id="copyToast" class="copy-toast">¡Copiado al portapapeles!</div>
 
   <!-- Script principal (módulos ES6) -->
   <script type="module" src="/static/assets/js/main.js?v=4.1"></script>
