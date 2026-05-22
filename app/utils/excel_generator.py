@@ -3,6 +3,7 @@ Utilidades para generar archivos Excel.
 """
 import io
 import re
+import unicodedata
 import pandas as pd
 from typing import Tuple
 from openpyxl.styles import Alignment, Font, PatternFill
@@ -19,7 +20,9 @@ _HEADER_FG = "FFFFFF"
 
 
 def clean_filename(name: str) -> str:
-    """Limpia un nombre para que sea válido como nombre de archivo"""
+    """Limpia un nombre para que sea válido como nombre de archivo y compatible con headers HTTP (ASCII)."""
+    # Normalizar unicode: descompone acentos y reemplaza caracteres como em-dash por equivalentes ASCII
+    name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode("ascii")
     return re.sub(r'[\\/*?:"<>|\s]+', "_", name).strip("_")
 
 
