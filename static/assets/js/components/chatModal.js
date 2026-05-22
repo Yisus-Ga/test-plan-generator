@@ -77,6 +77,7 @@ async function handleChatSend() {
   chatMessagesArray.push({ role: 'user', content: text });
   appendChatMessage('user', text);
   chatInputEl.value = '';
+  chatInputEl.style.height = 'auto';
   chatSendBtn.disabled = true;
   showChatLoading();
 
