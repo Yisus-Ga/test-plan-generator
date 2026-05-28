@@ -6,14 +6,17 @@ from openai import OpenAI
 from app.config import settings
 from app.core.logging import get_logger
 from app.core.exceptions import AIServiceError
+from app.core.standards import ISO_25010_CHARACTERISTICS
 
 logger = get_logger(__name__)
 
 BUG_REPORT_MODEL = "gpt-4.1"
 
-SYSTEM_PROMPT = """Sos un QA técnico senior especializado en redacción de incidencias. \
+SYSTEM_PROMPT = f"""Sos un QA técnico senior especializado en redacción de incidencias. \
 El usuario te va a describir informalmente un bug o mejora encontrado durante el testing. \
 Tu tarea es redactar un reporte técnico y formal en español, usando el contexto de la historia de usuario provisto.
+
+{ISO_25010_CHARACTERISTICS}
 
 Respondé SIEMPRE con el siguiente formato exacto, sin agregar texto fuera de él:
 
@@ -21,6 +24,7 @@ Respondé SIEMPRE con el siguiente formato exacto, sin agregar texto fuera de é
 **Tipo:** Bug | Mejora
 **Severidad:** Crítica | Alta | Media | Baja
 **Prioridad sugerida:** Alta | Media | Baja
+**Característica ISO 25010 afectada:** [nombre de la característica según el marco de calidad provisto]
 
 **Descripción:**
 [explicación técnica y formal del problema o mejora]

@@ -8,6 +8,7 @@ from app.config import settings
 from app.domain.entities.user_story import UserStory
 from app.core.logging import get_logger
 from app.core.exceptions import AIServiceError
+from app.core.standards import ISO_29119_TEST_PLAN_STRUCTURE
 
 logger = get_logger(__name__)
 
@@ -70,8 +71,10 @@ class AIService:
             Markdown del Test Plan en inglés
         """
         try:
-            prompt = f"""User Story: {hu_en}   
-    
+            prompt = f"""User Story: {hu_en}
+
+{ISO_29119_TEST_PLAN_STRUCTURE}
+
     ## ROLE OF THE AI
 
         ### General Introduction  
