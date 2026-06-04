@@ -8,7 +8,6 @@ import { listProjects } from '../api/projects.js';
 let testPlans = [];
 let filteredTestPlans = [];
 let projects = [];
-let listClickListenerAdded = false;
 
 /**
  * Inicializar página de historial
@@ -118,9 +117,8 @@ function setupEventListeners() {
       console.error('btn-clear-filters not found');
     }
 
-    if (listEl && !listClickListenerAdded) {
+    if (listEl) {
       listEl.addEventListener('click', handleListClick);
-      listClickListenerAdded = true;
     }
 
     // Enter en campos de filtro
