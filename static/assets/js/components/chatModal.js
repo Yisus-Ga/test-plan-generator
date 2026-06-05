@@ -70,6 +70,7 @@ function closeChatModal() {
 function enterBugReportMode() {
   bugReportMode = true;
 
+  if (bugReportBtn) bugReportBtn.style.display = 'none';
   if (bugReportBadge) bugReportBadge.classList.add('visible');
   if (bugReportExitBtn) bugReportExitBtn.classList.add('visible');
   if (chatModalBody) chatModalBody.classList.add('bug-report-mode');
@@ -87,6 +88,7 @@ function enterBugReportMode() {
 function exitBugReportMode() {
   bugReportMode = false;
 
+  if (bugReportBtn) bugReportBtn.style.display = '';
   if (bugReportBadge) bugReportBadge.classList.remove('visible');
   if (bugReportExitBtn) bugReportExitBtn.classList.remove('visible');
   if (chatModalBody) chatModalBody.classList.remove('bug-report-mode');
