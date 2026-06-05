@@ -586,3 +586,89 @@
 .btn-success:hover:not(:disabled) {
   background-color: #059669;
 }
+
+/* ── Toast notifications ── */
+.toast-container {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+  max-width: 360px;
+}
+
+.toast {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-base);
+  color: #fff;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.25s, transform 0.25s;
+  pointer-events: auto;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
+  line-height: var(--line-height-relaxed);
+  word-break: break-word;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast-success { background: #22c55e; }
+.toast-error   { background: var(--color-error, #ef4444); }
+.toast-warning { background: #f59e0b; }
+.toast-info    { background: var(--color-info, #3b82f6); }
+
+/* ── Confirm Dialog ── */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: var(--spacing-md);
+  animation: confirm-fade 0.15s ease;
+}
+
+@keyframes confirm-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.confirm-dialog {
+  background: var(--color-bg-primary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.confirm-title {
+  margin: 0 0 var(--spacing-sm);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.confirm-message {
+  margin: 0 0 var(--spacing-lg);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  white-space: pre-line;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+}

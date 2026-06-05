@@ -4,6 +4,8 @@
 import { listProjects, createProject, updateProject, deleteProject, toggleProjectStatus } from '../api/projects.js';
 import { post } from '../api/client.js';
 import { config } from '../config.js';
+import { showToast } from '../components/toast.js';
+import { showConfirm } from '../components/confirmDialog.js';
 
 let projects = [];
 
@@ -197,12 +199,12 @@ function renderProjectsList() {
           >Editar</button>
           <button
             class="btn ${toggleClass} btn-sm"
-            onclick="window.toggleProjectStatusHandler(${project.id}, '${escapeJs(project.code)}')"
+            onclick="window.toggleProjectStatusHandler(${project.id}, '${escapeJs(project.code)}', '${escapeJs(project.name)}')"
             title="${toggleLabel} proyecto"
           >${toggleLabel}</button>
           <button
             class="btn btn-danger btn-sm"
-            onclick="window.deleteProjectHandler(${project.id}, '${escapeJs(project.code)}')"
+            onclick="window.deleteProjectHandler(${project.id}, '${escapeJs(project.code)}', '${escapeJs(project.name)}')"
             title="Eliminar proyecto"
           >Eliminar</button>
         </div>
@@ -431,62 +433,54 @@ window.editProjectHandler = function(projectId, projectCode, projectName, projec
 /**
  * Alternar estado activo/inactivo de un proyecto
  */
-window.toggleProjectStatusHandler = async function(projectId, projectCode) {
+window.toggleProjectStatusHandler = async function(projectId, projectCode, projectName) {
+  const project = projects.find(p => p.id === projectId);
+  const isCurrentlyActive = project ? project.is_active !== false : true;
+  const actionLabel = isCurrentlyActive ? 'Inactivar' : 'Reactivar';
+  const actionVerb = isCurrentlyActive ? 'inactivar' : 'reactivar';
+
+  const confirmed = await showConfirm({
+    title: `${actionLabel} proyecto`,
+    message: `¿Estás seguro que querés ${actionVerb} el proyecto "${projectName || projectCode}"?`,
+    confirmText: actionLabel,
+    cancelText: 'Cancelar',
+    variant: isCurrentlyActive ? 'warning' : 'success',
+  });
+
+  if (!confirmed) return;
+
   try {
     const updated = await toggleProjectStatus(projectId);
-    const action = updated.is_active ? 'activado' : 'inactivado';
-    const listEl = document.getElementById('projects-list');
-    if (listEl) {
-      const msg = document.createElement('div');
-      msg.className = 'success';
-      msg.textContent = `Proyecto "${projectCode}" ${action} exitosamente`;
-      msg.style.marginBottom = 'var(--spacing-md)';
-      listEl.insertBefore(msg, listEl.firstChild);
-      setTimeout(() => msg.remove(), 3000);
-    }
+    const doneAction = updated.is_active ? 'activado' : 'inactivado';
+    showToast(`Proyecto "${projectName || projectCode}" ${doneAction} exitosamente`, 'success');
     await loadProjects();
     if (window.reloadProjectsInGenerator) window.reloadProjectsInGenerator();
   } catch (error) {
-    alert('Error al cambiar estado del proyecto: ' + error.message);
+    showToast('Error al cambiar estado del proyecto: ' + error.message, 'error');
   }
 };
 
 /**
  * Manejar eliminación de proyecto
  */
-window.deleteProjectHandler = async function(projectId, projectCode) {
-  if (!confirm(`¿Estás seguro de que deseas eliminar el proyecto "${projectCode}"?\n\nNota: No se puede eliminar un proyecto que tenga historias de usuario asociadas.`)) {
-    return;
-  }
-  
+window.deleteProjectHandler = async function(projectId, projectCode, projectName) {
+  const confirmed = await showConfirm({
+    title: 'Eliminar proyecto',
+    message: `¿Estás seguro que querés eliminar el proyecto "${projectName || projectCode}"?\n\nEsta acción no se puede deshacer. No es posible eliminar proyectos con historias de usuario asociadas.`,
+    confirmText: 'Eliminar',
+    cancelText: 'Cancelar',
+    variant: 'danger',
+  });
+
+  if (!confirmed) return;
+
   try {
     await deleteProject(projectId);
-    
-    // Mostrar mensaje de éxito
-    const listEl = document.getElementById('projects-list');
-    if (listEl) {
-      const statusDiv = document.createElement('div');
-      statusDiv.className = 'success';
-      statusDiv.textContent = `Proyecto "${projectCode}" eliminado exitosamente`;
-      statusDiv.style.marginBottom = 'var(--spacing-md)';
-      listEl.insertBefore(statusDiv, listEl.firstChild);
-      
-      // Remover el mensaje después de 3 segundos
-      setTimeout(() => {
-        statusDiv.remove();
-      }, 3000);
-    }
-    
-    // Recargar lista
+    showToast(`Proyecto "${projectName || projectCode}" eliminado exitosamente`, 'success');
     await loadProjects();
-    
-    // Recargar proyectos en la página de generación si está activa
-    if (window.reloadProjectsInGenerator) {
-      window.reloadProjectsInGenerator();
-    }
-    
+    if (window.reloadProjectsInGenerator) window.reloadProjectsInGenerator();
   } catch (error) {
     console.error('Error eliminando proyecto:', error);
-    alert('Error al eliminar proyecto: ' + error.message);
+    showToast('Error al eliminar proyecto: ' + error.message, 'error');
   }
 };

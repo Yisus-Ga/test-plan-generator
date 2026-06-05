@@ -341,7 +341,7 @@ async function handleAnalyze() {
  */
 async function handleDownload() {
   if (!currentToken) {
-    alert("No hay un resultado disponible para descargar.");
+    setStatus("No hay un resultado disponible para descargar.", 'error');
     return;
   }
 

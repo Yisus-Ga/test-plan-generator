@@ -4,6 +4,8 @@
 import { config } from '../config.js';
 import { get } from '../api/client.js';
 import { listProjects } from '../api/projects.js';
+import { showToast } from '../components/toast.js';
+import { showConfirm } from '../components/confirmDialog.js';
 
 let testPlans = [];
 let filteredTestPlans = [];
@@ -374,7 +376,7 @@ window.downloadTestPlan = async function(testPlanId) {
     a.remove();
     window.URL.revokeObjectURL(urlObj);
   } catch (error) {
-    alert('Error al descargar: ' + error.message);
+    showToast('Error al descargar: ' + error.message, 'error');
   }
 };
 
@@ -382,23 +384,31 @@ window.downloadTestPlan = async function(testPlanId) {
  * Eliminar Test Plan
  */
 window.deleteTestPlan = async function(testPlanId) {
-  if (!confirm('¿Estás seguro de que deseas eliminar este Test Plan?')) {
-    return;
-  }
-  
+  const tp = testPlans.find(t => t.id === testPlanId);
+  const label = tp ? `${tp.user_story_story_id} - ${tp.user_story_title}` : `#${testPlanId}`;
+
+  const confirmed = await showConfirm({
+    title: 'Eliminar Test Plan',
+    message: `¿Estás seguro que querés eliminar el Test Plan "${label}"?`,
+    confirmText: 'Eliminar',
+    cancelText: 'Cancelar',
+    variant: 'danger',
+  });
+
+  if (!confirmed) return;
+
   try {
     const response = await fetch(`${config.API_URL}/api/v1/test-plans/${testPlanId}`, {
       method: 'DELETE'
     });
-    
+
     if (!response.ok) {
       throw new Error('Error al eliminar Test Plan');
     }
-    
-    // Recargar lista
+
     await loadTestPlans();
-    alert('Test Plan eliminado exitosamente');
+    showToast('Test Plan eliminado exitosamente', 'success');
   } catch (error) {
-    alert('Error al eliminar: ' + error.message);
+    showToast('Error al eliminar: ' + error.message, 'error');
   }
 };
