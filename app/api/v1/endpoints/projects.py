@@ -4,13 +4,25 @@ Endpoints para Proyectos.
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 from sqlalchemy.orm import Session
-from app.schemas.project import ProjectCreate, ProjectResponse, ProjectUpdate
+from app.schemas.project import ProjectCreate, ProjectResponse, ProjectUpdate, ProjectStatusUpdate
 from app.services.project_service import ProjectService
 from app.repositories.interfaces.project_repository import ProjectRepository
 from app.repositories.sqlalchemy.project_repository import SQLAlchemyProjectRepository
 from app.db.session import get_db
 
 router = APIRouter(prefix="/api/v1", tags=["projects"])
+
+
+def _to_response(p) -> ProjectResponse:
+    return ProjectResponse(
+        id=p.id,
+        code=p.code,
+        name=p.name,
+        description=p.description,
+        is_active=p.is_active,
+        created_at=p.created_at,
+        updated_at=p.updated_at,
+    )
 
 
 def get_project_repository(db: Session = Depends(get_db)) -> ProjectRepository:
@@ -37,16 +49,7 @@ async def create_project(
             name=project_data.name,
             description=project_data.description
         )
-        # Convertir entidad a dict para Pydantic
-        project_dict = {
-            'id': project.id,
-            'code': project.code,
-            'name': project.name,
-            'description': project.description,
-            'created_at': project.created_at,
-            'updated_at': project.updated_at  # Puede ser None
-        }
-        return ProjectResponse(**project_dict)
+        return _to_response(project)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
@@ -57,22 +60,16 @@ async def create_project(
 async def list_projects(
     skip: int = 0,
     limit: int = 100,
+    active_only: bool = False,
     project_repo: ProjectRepository = Depends(get_project_repository)
 ):
-    """Listar todos los proyectos"""
+    """Listar proyectos. Con active_only=true devuelve solo los activos."""
     try:
-        projects = await project_repo.get_all(skip=skip, limit=limit)
-        return [
-            ProjectResponse(
-                id=p.id,
-                code=p.code,
-                name=p.name,
-                description=p.description,
-                created_at=p.created_at,
-                updated_at=p.updated_at  # Puede ser None
-            )
-            for p in projects
-        ]
+        if active_only:
+            projects = await project_repo.get_all_active()
+        else:
+            projects = await project_repo.get_all(skip=skip, limit=limit)
+        return [_to_response(p) for p in projects]
     except Exception as e:
         from app.core.logging import get_logger
         logger = get_logger(__name__)
@@ -92,14 +89,7 @@ async def get_project(
     project = await project_repo.get_by_id(project_id)
     if not project:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proyecto no encontrado")
-    return ProjectResponse(
-        id=project.id,
-        code=project.code,
-        name=project.name,
-        description=project.description,
-        created_at=project.created_at,
-        updated_at=project.updated_at
-    )
+    return _to_response(project)
 
 
 @router.get("/projects/code/{code}", response_model=ProjectResponse)
@@ -111,14 +101,7 @@ async def get_project_by_code(
     project = await project_repo.get_by_code(code)
     if not project:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proyecto no encontrado")
-    return ProjectResponse(
-        id=project.id,
-        code=project.code,
-        name=project.name,
-        description=project.description,
-        created_at=project.created_at,
-        updated_at=project.updated_at
-    )
+    return _to_response(project)
 
 
 @router.put("/projects/{project_id}", response_model=ProjectResponse)
@@ -134,16 +117,7 @@ async def update_project(
             name=project_data.name,
             description=project_data.description
         )
-        # Convertir entidad a dict para Pydantic
-        project_dict = {
-            'id': project.id,
-            'code': project.code,
-            'name': project.name,
-            'description': project.description,
-            'created_at': project.created_at,
-            'updated_at': project.updated_at  # Puede ser None
-        }
-        return ProjectResponse(**project_dict)
+        return _to_response(project)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
@@ -153,6 +127,27 @@ async def update_project(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al actualizar proyecto: {str(e)}"
+        )
+
+
+@router.patch("/projects/{project_id}/status", response_model=ProjectResponse)
+async def toggle_project_status(
+    project_id: int,
+    service: ProjectService = Depends(get_project_service)
+):
+    """Alternar estado activo/inactivo de un proyecto."""
+    try:
+        project = await service.toggle_status(project_id)
+        return _to_response(project)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except Exception as e:
+        from app.core.logging import get_logger
+        logger = get_logger(__name__)
+        logger.error(f"Error al cambiar estado del proyecto {project_id}: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al cambiar estado: {str(e)}"
         )
 
 

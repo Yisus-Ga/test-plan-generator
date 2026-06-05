@@ -40,6 +40,16 @@ class ProjectRepository(ABC):
         pass
     
     @abstractmethod
+    async def update_status(self, project_id: int, is_active: bool) -> Optional[Project]:
+        """Cambiar el estado activo/inactivo de un proyecto"""
+        pass
+
+    @abstractmethod
+    async def get_all_active(self) -> List[Project]:
+        """Obtener solo proyectos activos"""
+        pass
+
+    @abstractmethod
     async def count_user_stories(self, project_id: int) -> int:
         """Contar cuántas HUs tiene asociadas un proyecto"""
         pass

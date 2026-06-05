@@ -13,9 +13,10 @@ class Project:
     code: str = ""  # Ej: "AEROMAN", "AER25"
     name: str = ""
     description: Optional[str] = None
+    is_active: bool = True
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    
+
     def is_valid(self) -> bool:
         """Validación de reglas de negocio"""
         return (

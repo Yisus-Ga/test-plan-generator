@@ -1,7 +1,7 @@
 """
 Modelos SQLAlchemy ORM para la base de datos.
 """
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Enum as SQLEnum, JSON
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Enum as SQLEnum, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.db.base import Base
@@ -17,6 +17,7 @@ class ProjectORM(Base):
     code = Column(String(100), unique=True, nullable=False, index=True)  # Ej: "AEROMAN", "AER25"
     name = Column(String(200), nullable=False)
     description = Column(Text, nullable=True)
+    is_active = Column(Boolean, nullable=False, default=True, server_default="1")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     

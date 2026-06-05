@@ -1,7 +1,7 @@
 /**
  * Página para gestión de proyectos
  */
-import { listProjects, createProject, updateProject, deleteProject } from '../api/projects.js';
+import { listProjects, createProject, updateProject, deleteProject, toggleProjectStatus } from '../api/projects.js';
 import { post } from '../api/client.js';
 import { config } from '../config.js';
 
@@ -156,45 +156,55 @@ function renderProjectsList() {
   const listEl = document.getElementById('projects-list');
   if (!listEl) return;
   
+  const escapeJs = (str) => {
+    if (!str) return '';
+    return String(str)
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r');
+  };
+
   listEl.innerHTML = projects.map(project => {
-    // Escapar caracteres especiales para JavaScript
-    const escapeJs = (str) => {
-      if (!str) return '';
-      return String(str)
-        .replace(/\\/g, '\\\\')
-        .replace(/'/g, "\\'")
-        .replace(/"/g, '\\"')
-        .replace(/\n/g, '\\n')
-        .replace(/\r/g, '\\r');
-    };
-    
+    const isActive = project.is_active !== false;
+    const badgeHtml = isActive
+      ? `<span class="project-status-badge project-status-active">Activo</span>`
+      : `<span class="project-status-badge project-status-inactive">Inactivo</span>`;
+    const toggleLabel = isActive ? 'Inactivar' : 'Reactivar';
+    const toggleClass = isActive ? 'btn-warning' : 'btn-success';
+
     return `
     <div class="project-card" style="padding: var(--spacing-md); border-bottom: 1px solid var(--border);" data-project-id="${project.id}">
       <div style="display: flex; justify-content: space-between; align-items: start;">
         <div style="flex: 1;">
-          <h4 style="margin: 0 0 var(--spacing-xs) 0; color: var(--color-primary);">
-            ${project.code} - ${project.name}
-          </h4>
+          <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
+            <h4 style="margin: 0; color: var(--color-primary);">
+              ${project.code} - ${project.name}
+            </h4>
+            ${badgeHtml}
+          </div>
           ${project.description ? `<p style="margin: 0; color: var(--color-text-secondary);">${project.description}</p>` : ''}
           <small style="color: var(--color-text-secondary);">
             Creado: ${formatDate(project.created_at)}
           </small>
         </div>
-        <div style="margin-left: var(--spacing-md); display: flex; gap: var(--spacing-xs);">
-          <button 
-            class="btn btn-primary btn-sm" 
+        <div style="margin-left: var(--spacing-md); display: flex; gap: var(--spacing-xs); flex-wrap: wrap; justify-content: flex-end;">
+          <button
+            class="btn btn-primary btn-sm"
             onclick="window.editProjectHandler(${project.id}, '${escapeJs(project.code)}', '${escapeJs(project.name)}', '${escapeJs(project.description)}')"
             title="Editar proyecto"
-          >
-            Editar
-          </button>
-          <button 
-            class="btn btn-danger btn-sm" 
+          >Editar</button>
+          <button
+            class="btn ${toggleClass} btn-sm"
+            onclick="window.toggleProjectStatusHandler(${project.id}, '${escapeJs(project.code)}')"
+            title="${toggleLabel} proyecto"
+          >${toggleLabel}</button>
+          <button
+            class="btn btn-danger btn-sm"
             onclick="window.deleteProjectHandler(${project.id}, '${escapeJs(project.code)}')"
             title="Eliminar proyecto"
-          >
-            Eliminar
-          </button>
+          >Eliminar</button>
         </div>
       </div>
     </div>
@@ -416,6 +426,29 @@ window.editProjectHandler = function(projectId, projectCode, projectName, projec
       saveBtn.disabled = false;
     }
   });
+};
+
+/**
+ * Alternar estado activo/inactivo de un proyecto
+ */
+window.toggleProjectStatusHandler = async function(projectId, projectCode) {
+  try {
+    const updated = await toggleProjectStatus(projectId);
+    const action = updated.is_active ? 'activado' : 'inactivado';
+    const listEl = document.getElementById('projects-list');
+    if (listEl) {
+      const msg = document.createElement('div');
+      msg.className = 'success';
+      msg.textContent = `Proyecto "${projectCode}" ${action} exitosamente`;
+      msg.style.marginBottom = 'var(--spacing-md)';
+      listEl.insertBefore(msg, listEl.firstChild);
+      setTimeout(() => msg.remove(), 3000);
+    }
+    await loadProjects();
+    if (window.reloadProjectsInGenerator) window.reloadProjectsInGenerator();
+  } catch (error) {
+    alert('Error al cambiar estado del proyecto: ' + error.message);
+  }
 };
 
 /**

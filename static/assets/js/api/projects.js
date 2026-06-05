@@ -12,6 +12,35 @@ export async function listProjects() {
 }
 
 /**
+ * Listar solo proyectos activos (para dropdowns del generador)
+ */
+export async function listActiveProjects() {
+  return await get('/api/v1/projects/?active_only=true');
+}
+
+/**
+ * Alternar estado activo/inactivo de un proyecto
+ */
+export async function toggleProjectStatus(projectId) {
+  const response = await fetch(`${config.API_URL}/api/v1/projects/${projectId}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorMessage = 'Error al cambiar estado del proyecto';
+    try {
+      const errorJson = JSON.parse(errorText);
+      errorMessage = errorJson.detail || errorMessage;
+    } catch {
+      errorMessage = errorText || errorMessage;
+    }
+    throw new Error(errorMessage);
+  }
+  return response.json();
+}
+
+/**
  * Obtener proyecto por código
  */
 export async function getProjectByCode(code) {

@@ -21,10 +21,11 @@ class SQLAlchemyProjectRepository(ProjectRepository):
             code=orm.code,
             name=orm.name,
             description=orm.description,
+            is_active=bool(orm.is_active),
             created_at=orm.created_at,
             updated_at=orm.updated_at
         )
-    
+
     def _entity_to_orm(self, entity: Project) -> ProjectORM:
         """Convertir entidad de dominio a modelo ORM"""
         if entity.id:
@@ -33,11 +34,12 @@ class SQLAlchemyProjectRepository(ProjectRepository):
                 orm = ProjectORM()
         else:
             orm = ProjectORM()
-        
+
         orm.code = entity.code
         orm.name = entity.name
         orm.description = entity.description
-        
+        orm.is_active = entity.is_active
+
         return orm
     
     async def create(self, project: Project) -> Project:
@@ -83,6 +85,21 @@ class SQLAlchemyProjectRepository(ProjectRepository):
         self.db.commit()
         return True
     
+    async def update_status(self, project_id: int, is_active: bool) -> Optional[Project]:
+        """Cambiar el estado activo/inactivo de un proyecto"""
+        orm = self.db.query(ProjectORM).filter(ProjectORM.id == project_id).first()
+        if not orm:
+            return None
+        orm.is_active = is_active
+        self.db.commit()
+        self.db.refresh(orm)
+        return self._orm_to_entity(orm)
+
+    async def get_all_active(self) -> List[Project]:
+        """Obtener solo proyectos activos"""
+        orms = self.db.query(ProjectORM).filter(ProjectORM.is_active == True).all()
+        return [self._orm_to_entity(orm) for orm in orms]
+
     async def count_user_stories(self, project_id: int) -> int:
         """Contar cuántas HUs tiene asociadas un proyecto"""
         from app.db.models import UserStoryORM

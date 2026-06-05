@@ -4,7 +4,7 @@
 import { config } from '../config.js';
 import { validateForm, validators } from '../utils/validation.js';
 import { analyzeUserStory, downloadTestPlan } from '../api/test_plans.js';
-import { listProjects } from '../api/projects.js';
+import { listActiveProjects } from '../api/projects.js';
 
 // Referencias a elementos del DOM
 let huId, huTitle, huDescription, huAC, projectCode;
@@ -53,7 +53,7 @@ export function initGeneratorPage() {
  */
 async function loadProjects() {
   try {
-    const projects = await listProjects();
+    const projects = await listActiveProjects();
     console.log('Proyectos cargados:', projects);
     
     // Limpiar opciones actuales

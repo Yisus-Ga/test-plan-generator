@@ -547,3 +547,42 @@
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+/* ── Estado de proyectos ── */
+.project-status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+}
+
+.project-status-active {
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+  border: 1px solid #6ee7b7;
+}
+
+.project-status-inactive {
+  background: rgba(107, 114, 128, 0.12);
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.btn-warning {
+  background-color: #f59e0b;
+  color: #fff;
+}
+.btn-warning:hover:not(:disabled) {
+  background-color: #d97706;
+}
+
+.btn-success {
+  background-color: #10b981;
+  color: #fff;
+}
+.btn-success:hover:not(:disabled) {
+  background-color: #059669;
+}

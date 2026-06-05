@@ -73,6 +73,16 @@ class ProjectService:
         logger.info(f"Proyecto actualizado: {updated.code} (ID: {project_id})")
         return updated
     
+    async def toggle_status(self, project_id: int) -> Project:
+        """Alternar estado activo/inactivo de un proyecto"""
+        project = await self.project_repo.get_by_id(project_id)
+        if not project:
+            raise ValueError(f"Proyecto con ID {project_id} no encontrado")
+        updated = await self.project_repo.update_status(project_id, not project.is_active)
+        action = "activado" if updated.is_active else "inactivado"
+        logger.info(f"Proyecto {action}: {updated.code} (ID: {project_id})")
+        return updated
+
     async def delete_project(self, project_id: int) -> bool:
         """
         Eliminar un proyecto.
