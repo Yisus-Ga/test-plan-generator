@@ -1,24 +1,43 @@
 # Test Plan Generator
 
-Plataforma de análisis de Historias de Usuario (HU) con IA para generar Test Plans estructurados.
+Plataforma que analiza **Historias de Usuario (HU)** con IA y genera documentación de QA estructurada: **resumen/análisis**, **plan de pruebas priorizado** y **casos de prueba** cubriendo los 7 escenarios (positivo, negativo, límite, no funcional, compatibilidad, seguridad, regresión), bajo las normas **ISO/IEC 25010**, **ISO/IEC/IEEE 29119** e **ISTQB**. Exporta a **Excel, CSV, Jira y JSON**.
 
-## Configuración rápida
+**Stack:** FastAPI + SQLAlchemy/Alembic (SQLite) · frontend SPA en JS vanilla modular · IA vía OpenAI.
 
-1. **Clonar** el repositorio.
-2. **Copiar** `.env.example` a `.env`:
-   ```powershell
-   copy .env.example .env
-   ```
-3. **Editar** `.env` y completar tu `OPENAI_API_KEY` (obtenerla en [platform.openai.com/api-keys](https://platform.openai.com/api-keys)).
-4. **Instalar** dependencias e iniciar:
-   ```powershell
-   pip install -r requirements.txt
-   uvicorn app.main:app --reload
-   ```
+> **Hacia dónde va el proyecto:** evolucionar hacia **perfiles de dominio** para cubrir distintos tipos de aplicaciones (web/GeneXus, core bancario/Bantotal) con un único motor. Resumen ejecutivo: [`PROPUESTA_PERFILES_DOMINIO.md`](PROPUESTA_PERFILES_DOMINIO.md). Detalle técnico y plan: [`docs/`](docs/README.md).
 
-> ⚠️ **Nunca** subas tu archivo `.env` a GitHub. Ya está excluido en `.gitignore`.
+## Puesta en marcha rápida
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate
+pip install -r requirements.txt
+copy .env.example .env      # editar .env y completar OPENAI_API_KEY
+alembic upgrade head
+uvicorn app.main:app --reload
+```
+
+- App: http://127.0.0.1:8000 · API docs: http://127.0.0.1:8000/docs
+
+Detalle completo en [docs/00 — Entorno y Puesta en Marcha](docs/00_CONSIDERACIONES_INFRAESTRUCTURA_LOCAL.md) y en [`comandos.txt`](comandos.txt).
+
+## Seguridad de secretos
+
+> ⚠️ **Nunca** subas tu archivo `.env` (ni la base de datos). Ya están excluidos en `.gitignore`.
+> Usá `.env.example` como plantilla. Las claves reales de API y los datos productivos no se versionan.
 
 ## Documentación
 
-- [Guía: Publicar en GitHub sin exponer la API Key](docs/09_GUIA_PUBLICAR_EN_GITHUB.md)
-- [Índice de documentación arquitectónica](docs/README.md)
+- [Índice de documentación](docs/README.md)
+- [Propuesta de Perfiles de Dominio (resumen ejecutivo)](PROPUESTA_PERFILES_DOMINIO.md)
+
+## Estructura del proyecto
+
+```
+app/            Backend FastAPI (dominio, repositorios, servicios, API, core/standards)
+static/         Frontend SPA (router, pages, components, api)
+alembic/        Migraciones de base de datos
+tests/          Tests unitarios y de integración (pytest)
+docs/           Documentación del proyecto y del roadmap de perfiles
+scripts/        Utilidades (ver scripts/README.md)
+```

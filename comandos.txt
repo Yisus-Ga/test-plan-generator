@@ -1,32 +1,47 @@
+# =====================================================
+#  Test Plan Generator - Comandos frecuentes (PowerShell)
+# =====================================================
+
+# --- Entorno virtual ---
+# Crear (primera vez)
+python -m venv .venv
+
 # Activar (desde la raíz del proyecto)
 .\.venv\Scripts\Activate
-
-# Instalar dependencias (primera vez)
-pip install -r requirements.txt
-
-# Ejecutar la app
-uvicorn app.main:app --reload
-
-# Ejecutar todos los tests
-python -m pytest tests/ -v
-
-# Solo tests unitarios (Semana 1)
-python -m pytest tests/unit/ -v
-
-# Solo tests de integración (Semana 2 + 3: servicios y endpoints)
-python -m pytest tests/integration/ -v
-
-# Solo tests de endpoints (BD en memoria)
-python -m pytest tests/integration/test_endpoints.py -v
 
 # Desactivar
 deactivate
 
-# ========== GITHUB - Subir cambios ==========
+# --- Dependencias ---
+# Instalar (primera vez o al actualizar requirements.txt)
+pip install -r requirements.txt
 
+# --- Base de datos (Alembic) ---
+# Aplicar migraciones / crear la BD
+alembic upgrade head
 
+# Generar una migración nueva tras cambiar los modelos ORM
+alembic revision --autogenerate -m "descripcion del cambio"
 
-# --- Comandos para actualizaciones posteriores (cuando ya subiste una vez) ---
+# --- Ejecutar la app ---
+uvicorn app.main:app --reload
+#   App:      http://127.0.0.1:8000
+#   API docs: http://127.0.0.1:8000/docs
+
+# --- Tests ---
+# Todos
+python -m pytest tests/ -v
+
+# Solo unitarios
+python -m pytest tests/unit/ -v
+
+# Solo integración (servicios y endpoints)
+python -m pytest tests/integration/ -v
+
+# Solo endpoints (BD en memoria)
+python -m pytest tests/integration/test_endpoints.py -v
+
+# ========== GIT - Subir cambios ==========
 # git add .
-# git commit -m "Nuevo mensaje describiendo los cambios"
+# git commit -m "Mensaje describiendo los cambios"
 # git push
