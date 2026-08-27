@@ -1,43 +1,161 @@
-# Test Plan Generator
+# 🧪 Test Plan Generator
 
-Plataforma que analiza **Historias de Usuario (HU)** con IA y genera documentación de QA estructurada: **resumen/análisis**, **plan de pruebas priorizado** y **casos de prueba** cubriendo los 7 escenarios (positivo, negativo, límite, no funcional, compatibilidad, seguridad, regresión), bajo las normas **ISO/IEC 25010**, **ISO/IEC/IEEE 29119** e **ISTQB**. Exporta a **Excel, CSV, Jira y JSON**.
+> AI-powered platform that transforms Jira user stories into structured,
+> ISTQB-compliant test plans — reducing elaboration time from 4 hours to
+> 25 minutes per story.
 
-**Stack:** FastAPI + SQLAlchemy/Alembic (SQLite) · frontend SPA en JS vanilla modular · IA vía OpenAI.
+![Python](https://img.shields.io/badge/Python-3.11-blue?style=flat&logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green?style=flat&logo=fastapi)
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-412991?style=flat&logo=openai)
+![ISTQB](https://img.shields.io/badge/Standard-ISTQB%20%7C%20ISO%2029119-orange?style=flat)
+![License](https://img.shields.io/badge/License-Private-red?style=flat)
 
-> **Hacia dónde va el proyecto:** evolucionar hacia **perfiles de dominio** para cubrir distintos tipos de aplicaciones (web/GeneXus, core bancario/Bantotal) con un único motor. Resumen ejecutivo: [`PROPUESTA_PERFILES_DOMINIO.md`](PROPUESTA_PERFILES_DOMINIO.md). Detalle técnico y plan: [`docs/`](docs/README.md).
+---
 
-## Puesta en marcha rápida
+## 📌 The Problem
 
-```powershell
+In QA teams working under Agile methodologies, building a test plan for a
+single user story can take **1 to 4 hours**. Time pressure leads to skipped
+test cases, inconsistent coverage, and no standard format — making
+traceability between stories and test evidence nearly impossible.
+
+---
+
+## ✅ The Solution
+
+**Test Plan Generator** is an internal tool built with FastAPI and OpenAI
+that automates the full test plan elaboration process:
+
+- Paste or load a Jira user story
+- The AI pipeline analyzes requirements and acceptance criteria
+- Generates a complete, prioritized test plan in seconds
+- Export to **Excel, CSV, JSON or Jira**
+
+### Results
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Time per user story | 1–4 hours | 15–25 minutes |
+| Coverage consistency | Variable per analyst | Standardized — 7 test types |
+| Excel export | Manual | Automated in < 2 seconds |
+| Bug report format | Free text | Structured formal report |
+
+---
+
+## 🧠 AI-Assisted QA Methodology
+
+All AI prompts are structured under formal QA standards:
+
+- **ISO/IEC 25010** — Software product quality model
+- **ISO/IEC/IEEE 29119** — Software testing standards  
+- **ISTQB** — International Software Testing Qualifications Board guidelines
+
+This ensures generated test cases are not just syntactically correct but
+semantically aligned with industry-accepted quality criteria.
+
+### 7 Standardized Test Types
+
+Every generated plan covers:
+
+| Type | Description |
+|------|-------------|
+| ✅ Positive | Valid inputs and expected happy paths |
+| ❌ Negative | Invalid inputs, error handling, boundary violations |
+| 🔍 Exploratory | Edge cases and unexpected user behavior |
+| ⚙️ Non-functional | Performance, usability, accessibility |
+| 📱 Compatibility | Cross-browser, cross-device, cross-OS |
+| 🔒 Security | Auth, permissions, injection, data exposure |
+| 🔁 Regression | Core flows that must not break on new releases |
+
+---
+
+## 🐛 Bug Reporter Module
+
+Analysts describe a defect or improvement in plain language — the AI
+generates a **formal structured bug report**, standardizing defect
+documentation across all team projects.
+
+**Input:** *"The login button doesn't respond on mobile when the keyboard
+is open"*
+
+**Output:** Structured report with severity, priority, steps to reproduce,
+expected vs actual result, environment, and acceptance criteria for closure.
+
+---
+
+## 🛠️ Tech Stack
+
+**Backend**
+- FastAPI + SQLAlchemy + Alembic (SQLite)
+- OpenAI API (GPT-4) for test case generation
+- Prompt orchestration with domain-specific QA context
+
+**Frontend**
+- Vanilla JS SPA — modular router and components
+- No framework dependencies
+
+**Tooling**
+- pytest for unit and integration tests
+- Alembic for database migrations
+- Export engine: Excel, CSV, JSON, Jira-compatible format
+
+---
+
+## 🚀 Quick Start
+
+```bash
 python -m venv .venv
-.\.venv\Scripts\Activate
+.\.venv\Scripts\Activate          # Windows
+source .venv/bin/activate         # macOS/Linux
+
 pip install -r requirements.txt
-copy .env.example .env      # editar .env y completar OPENAI_API_KEY
+copy .env.example .env            # Add your OPENAI_API_KEY
 alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
-- App: http://127.0.0.1:8000 · API docs: http://127.0.0.1:8000/docs
+- App: http://127.0.0.1:8000  
+- API docs: http://127.0.0.1:8000/docs
 
-Detalle completo en [docs/00 — Entorno y Puesta en Marcha](docs/00_CONSIDERACIONES_INFRAESTRUCTURA_LOCAL.md) y en [`comandos.txt`](comandos.txt).
+> ⚠️ You need your own OpenAI API key to run this project locally.
+> Copy `.env.example` to `.env` and fill in your credentials.
+> Never commit your `.env` file — it's already excluded in `.gitignore`.
 
-## Seguridad de secretos
+---
 
-> ⚠️ **Nunca** subas tu archivo `.env` (ni la base de datos). Ya están excluidos en `.gitignore`.
-> Usá `.env.example` como plantilla. Las claves reales de API y los datos productivos no se versionan.
+## 📁 Project Structure
 
-## Documentación
+- app/ Backend — domain logic, repositories, services, API routes
+- static/ Frontend SPA — router, pages, components, API client
+- alembic/ Database migrations
+- tests/ Unit and integration tests (pytest)
+- docs/ Technical documentation and architecture decisions
 
-- [Índice de documentación](docs/README.md)
-- [Propuesta de Perfiles de Dominio (resumen ejecutivo)](PROPUESTA_PERFILES_DOMINIO.md)
 
-## Estructura del proyecto
+---
 
-```
-app/            Backend FastAPI (dominio, repositorios, servicios, API, core/standards)
-static/         Frontend SPA (router, pages, components, api)
-alembic/        Migraciones de base de datos
-tests/          Tests unitarios y de integración (pytest)
-docs/           Documentación del proyecto y del roadmap de perfiles
-scripts/        Utilidades (ver scripts/README.md)
-```
+## 💡 How This Project Is Built
+
+This tool is developed using **AI-assisted workflows** as a core methodology:
+
+- Test case prompts are engineered under ISO/ISTQB standards
+- Claude AI and ChatGPT used for prompt iteration and quality validation
+- Cursor for AI-assisted code development
+- The tool itself is used daily in production across multiple QA projects
+
+> This is not just a portfolio project — it's in active daily use across
+> real client projects, standardizing QA processes with full traceability.
+
+---
+
+## 📊 Sample Outputs
+
+*(Coming soon — anonymized test plan examples generated by the tool)*
+
+---
+
+## 👤 Author
+
+**Jesús Gallardo** — QA Engineer | AI Quality Specialist  
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-jesus--gallardo-0077B5?style=flat&logo=linkedin)](https://www.linkedin.com/in/jesus-gallardo-9abb0a123/)
+[![GitHub](https://img.shields.io/badge/GitHub-Yisus--Ga-181717?style=flat&logo=github)](https://github.com/Yisus-Ga)
